@@ -64,7 +64,7 @@ function readData() {
       }
     } else {
       // Create empty DB template
-      fs.writeFileSync(DB_FILE, JSON.stringify({ settings: { title: "testmoslem", adminPassword: "admin" }, categories: [], items: [] }, null, 2));
+      fs.writeFileSync(DB_FILE, JSON.stringify({ settings: { title: "Weekend", adminPassword: "admin" }, categories: [], items: [] }, null, 2));
     }
   }
 
@@ -337,6 +337,18 @@ app.get('/secret-admin-portal', (req, res) => {
 // Wildcard for client-side routing fallback or redirection
 app.get('/admin', (req, res) => {
   res.redirect('/secret-admin-portal');
+});
+
+// Express Error Handler Middleware (Catches Multer or permission errors, returns clean JSON instead of HTML)
+app.use((err, req, res, next) => {
+  console.error('Express Error Handler:', err);
+  if (err instanceof multer.MulterError) {
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      return res.status(400).json({ error: 'حجم فایل انتخابی بیش از حد مجاز (۵ مگابایت) است.' });
+    }
+    return res.status(400).json({ error: `خطای آپلود: ${err.message}` });
+  }
+  res.status(500).json({ error: err.message || 'یک خطای داخلی در سرور رخ داده است.' });
 });
 
 app.listen(PORT, () => {
