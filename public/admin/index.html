@@ -658,17 +658,19 @@
       if (!response.ok) {
         let errMsg = 'خطا در ارتباط با سرور.';
         try {
-          const errData = await response.json();
-          errMsg = errData.error || errMsg;
-        } catch (e) {
+          const errText = await response.text();
           try {
-            const errText = await response.text();
-            if (response.status === 413 || errText.includes('Too Large')) {
-              errMsg = 'حجم فایل انتخابی بیش از حد مجاز (۵ مگابایت) است.';
+            const errData = JSON.parse(errText);
+            errMsg = errData.error || errMsg;
+          } catch (jsonErr) {
+            if (response.status === 413 || errText.includes('Too Large') || errText.includes('too large')) {
+              errMsg = 'حجم فایل انتخابی بیش از حد مجاز (۵ مگابایت) است. (Nginx 413)';
             } else {
               errMsg = `خطای سرور (${response.status}): ${errText.substring(0, 100)}`;
             }
-          } catch (e2) {}
+          }
+        } catch (readErr) {
+          errMsg = `خطای ارتباطی (${response.status})`;
         }
         throw new Error(errMsg);
       }
@@ -1389,5 +1391,5 @@
     // Initial check
     window.addEventListener('DOMContentLoaded', checkAuth);
   </script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0592e191c5d23f6',t:'MTc4MDQzMTg1MA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
