@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="100" height="100">
+    <!-- Drinks Can -->
+    <rect x="18" y="14" width="28" height="42" rx="4" fill="#A5D6A7" stroke="#333" stroke-width="3"/>
+    <!-- Can details -->
+    <path d="M18 22h28 M18 48h28" stroke="#333" stroke-width="2"/>
+    <rect x="22" y="26" width="20" height="18" rx="2" fill="#81C784" stroke="#333" stroke-width="2"/>
+    <!-- Pull tab -->
+    <path d="M32 14v-4h4v4" fill="none" stroke="#333" stroke-width="2" stroke-linejoin="round"/>
+    <!-- Cute design on can -->
+    <circle cx="32" cy="35" r="4" fill="#FFF" stroke="#333" stroke-width="1.5"/>
+  </svg>

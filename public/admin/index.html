@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>پنل مدیریت منو | testmoslem Cafe</title>
+  
+  <!-- Vazirmatn Persian Font from CDN -->
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Vazirmatn', 'Tahoma', 'sans-serif'],
+          },
+          colors: {
+            admin: {
+              primary: '#0F172A', // dark Slate
+              accent: '#3B82F6', // active blue
+              bg: '#F8FAFC',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Vazirmatn', Tahoma, sans-serif;
+      background-color: #F1F5F9;
+    }
+    
+    /* Smooth transitions */
+    .fade-in {
+      animation: fadeIn 0.3s ease-out forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="min-h-screen text-slate-800 antialiased flex flex-col">
+
+  <!-- ================= TOAST NOTIFICATION ================= -->
+  <div id="toast" class="fixed top-5 left-5 z-50 transform -translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+    <div class="bg-slate-900 text-white text-xs font-bold px-6 py-3.5 rounded-2xl shadow-xl flex items-center space-x-2 space-x-reverse border border-slate-800">
+      <span id="toast-icon" class="text-emerald-400">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </span>
+      <span id="toast-msg">عملیات با موفقیت انجام شد.</span>
+    </div>
+  </div>
+
+  <!-- ================= LOGIN SCREEN ================= -->
+  <div id="login-screen" class="flex-grow flex items-center justify-center px-4 py-12">
+    <div class="w-full max-w-md bg-white rounded-3xl shadow-xl border border-slate-100 p-8 transform transition duration-300">
+      <div class="text-center mb-8">
+        <div class="w-16 h-16 bg-slate-100 rounded-2xl mx-auto flex items-center justify-center mb-4 text-slate-700">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-8 h-8">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+          </svg>
+        </div>
+        <h1 class="text-2xl font-black text-slate-900 mb-1">ورود به پنل مدیریت</h1>
+        <p class="text-xs font-semibold text-slate-400">منوی دیجیتال کافه testmoslem</p>
+      </div>
+
+      <form id="login-form" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-500 mb-2">رمز عبور مدیریت</label>
+          <input type="password" id="login-password" required placeholder="••••••••" 
+            class="w-full bg-slate-50 text-slate-800 text-sm font-medium py-3 px-4 rounded-xl border border-slate-100 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all text-center">
+        </div>
+        <div id="login-error" class="text-xs text-rose-500 font-bold hidden text-center">رمز عبور نادرست است.</div>
+        <button type="submit" 
+          class="w-full bg-slate-900 hover:bg-slate-800 text-white text-sm font-bold py-3.5 rounded-xl shadow-lg transition-all transform active:scale-[0.98]">
+          ورود به پنل
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= ADMIN PANEL SCREEN ================= -->
+  <div id="admin-screen" class="hidden flex-grow flex flex-col md:flex-row">
+    
+    <!-- SIDEBAR -->
+    <aside class="w-full md:w-64 bg-slate-900 text-slate-300 flex flex-col border-l border-slate-800 shrink-0">
+      <!-- Brand Header -->
+      <div class="p-6 border-b border-slate-800 flex items-center justify-between">
+        <div>
+          <h2 class="text-lg font-black text-white">مدیریت testmoslem</h2>
+          <p class="text-[10px] text-slate-500 font-semibold mt-0.5">کنترل پنل منوی دیجیتال</p>
+        </div>
+        <button id="logout-btn" class="text-slate-500 hover:text-rose-400 transition-colors" title="خروج">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 3l3-3m0 0l-3-3m3 3H9" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="flex-grow p-4 space-y-1.5">
+        <button id="tab-settings-btn" class="tab-btn w-full flex items-center space-x-3 space-x-reverse px-4 py-3 rounded-xl text-sm font-bold transition-all text-white bg-slate-800">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.557 0 1.02.398 1.11.94l.149.894c.07.424.384.764.78.93.398.164.855.142 1.205-.108l.737-.527a1.125 1.125 0 011.45.12l.773.774c.39.389.44 1.002.12 1.45l-.527.737c-.25.35-.272.806-.107 1.204.165.397.505.71.93.78l.893.15c.543.09.94.559.94 1.117v1.092c0 .557-.397 1.02-.94 1.11l-.893.15c-.425.07-.765.385-.93.78-.165.398-.143.854.107 1.204l.527.738c.32.447.269 1.06-.12 1.45l-.774.773a1.125 1.125 0 01-1.449.12l-.738-.527c-.35-.25-.806-.272-1.203-.107-.398.165-.71.505-.781.929l-.149.894c-.09.542-.56.94-1.11.94h-1.094a1.125 1.125 0 01-1.11-.94l-.148-.894c-.071-.424-.384-.764-.78-.93-.398-.164-.855-.142-1.205.108l-.738.527a1.125 1.125 0 01-1.448-.12l-.774-.774a1.125 1.125 0 01-.12-1.45l.527-.737c.25-.35.272-.806.108-1.204-.165-.397-.506-.71-.93-.78l-.894-.15a1.125 1.125 0 01-.938-1.117v-1.092c0-.558.397-1.02.94-1.11l.894-.15c.424-.07.764-.385.93-.78.164-.397.142-.854-.108-1.204l-.527-.738a1.125 1.125 0 01.12-1.45l.773-.773a1.125 1.125 0 011.45-.12l.737.527c.35.25.807.272 1.204.107.397-.165.71-.505.78-.929l.15-.894z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+          <span>تنظیمات عمومی</span>
+        </button>
+        <button id="tab-categories-btn" class="tab-btn w-full flex items-center space-x-3 space-x-reverse px-4 py-3 rounded-xl text-sm font-bold transition-all text-slate-400 hover:bg-slate-800 hover:text-white">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 13.5h3.86a2.25 2.25 0 012.008 1.24l.885 1.77a2.25 2.25 0 002.007 1.24h1.98a2.25 2.25 0 002.007-1.24l.885-1.77a2.25 2.25 0 012.007-1.24h3.86m-18 0h18m-18 0v-5.25A2.25 2.25 0 014.25 6h15.5A2.25 2.25 0 0122 8.25v5.25m-18 0V19.5A2.25 2.25 0 004.25 21h15.5A2.25 2.25 0 0022 19.5V13.5" />
+          </svg>
+          <span>مدیریت دسته‌بندی‌ها</span>
+        </button>
+        <button id="tab-items-btn" class="tab-btn w-full flex items-center space-x-3 space-x-reverse px-4 py-3 rounded-xl text-sm font-bold transition-all text-slate-400 hover:bg-slate-800 hover:text-white">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 01-2.25 2.25M16.5 7.5V18a2.25 2.25 0 002.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 002.25 2.25h13.5M6 7.5h3v3H6v-3z" />
+          </svg>
+          <span>مدیریت آیتم‌های منو</span>
+        </button>
+        <!-- Tab: Media manager -->
+        <button id="tab-media-btn" class="tab-btn w-full flex items-center space-x-3 space-x-reverse px-4 py-3 rounded-xl text-sm font-bold transition-all text-slate-400 hover:bg-slate-800 hover:text-white">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+          </svg>
+          <span>مدیریت رسانه (گالری)</span>
+        </button>
+      </nav>
+
+      <!-- Preview Live Button -->
+      <div class="p-4 border-t border-slate-800">
+        <a href="/" target="_blank" class="flex items-center justify-center space-x-2 space-x-reverse bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-3 px-4 rounded-xl transition-all shadow-md">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-1.011 9.75 9.75 0 0113.924 0 1.012 1.012 0 010 1.011 9.75 9.75 0 01-13.924 0z" />
+            <circle cx="12" cy="12" r="3" />
+          </svg>
+          <span>مشاهده منو سمت کاربر</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- MAIN WORK AREA -->
+    <main class="flex-grow p-6 md:p-8 max-w-5xl mx-auto w-full overflow-y-auto">
+
+      <!-- ================= SECTION: SETTINGS ================= -->
+      <section id="sec-settings" class="admin-section fade-in">
+        <div class="flex items-center justify-between mb-8">
+          <div>
+            <h1 class="text-2xl font-black text-slate-900">تنظیمات عمومی سایت</h1>
+            <p class="text-xs font-semibold text-slate-400 mt-1">تغییر عنوان‌ها، اطلاعات تماس، آدرس، لوگو و رمز عبور</p>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-6 md:p-8">
+          <form id="settings-form" class="space-y-6">
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-xs font-bold text-slate-500 mb-2.5">عنوان اصلی کافه (مثال: testmoslem)</label>
+                <input type="text" id="set-title" required class="w-full bg-slate-50 text-slate-800 text-sm font-semibold py-3 px-4 rounded-xl border border-slate-100 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-500 mb-2.5">زیرعنوان کافه (مثال: Cafe & Resturant)</label>
+                <input type="text" id="set-subtitle" required class="w-full bg-slate-50 text-slate-800 text-sm font-semibold py-3 px-4 rounded-xl border border-slate-100 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-500 mb-2.5">توضیحات کوتاه / اسلوگان (مثال: !The House Of Mood)</label>
+              <input type="text" id="set-desc" class="w-full bg-slate-50 text-slate-800 text-sm font-semibold py-3 px-4 rounded-xl border border-slate-100 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all">
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-100">
+              <div>
+                <label class="block text-xs font-bold text-slate-500 mb-2.5">شماره تماس کافه (مثال: 09035116886)</label>
+                <input type="text" id="set-phone" class="w-full bg-slate-50 text-slate-800 text-sm font-semibold py-3 px-4 rounded-xl border border-slate-100 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-500 mb-2.5">متن کپی رایت</label>
+                <input type="text" id="set-credit" class="w-full bg-slate-50 text-slate-800 text-sm font-semibold py-3 px-4 rounded-xl border border-slate-100 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-500 mb-2.5">آدرس حضوری کافه (مثال: کیانپارس، بین میهن و یک)</label>
+              <input type="text" id="set-address" class="w-full bg-slate-50 text-slate-800 text-sm font-semibold py-3 px-4 rounded-xl border border-slate-100 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all">
+            </div>
+
+            <!-- Logo Upload -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t border-slate-100">
+              <div class="md:col-span-1 flex flex-col items-center justify-center p-4 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                <span class="text-xs font-bold text-slate-500 mb-4">پیش‌نمایش لوگو فعلی</span>
+                <div class="w-28 h-28 bg-white rounded-2xl shadow-sm flex items-center justify-center p-2 border border-slate-100">
+                  <img id="logo-preview-img" src="" alt="Logo" class="max-w-full max-h-full object-contain hidden">
+                  <span id="logo-placeholder" class="text-xs text-slate-400 font-semibold">بدون لوگو</span>
+                </div>
+              </div>
+              <div class="md:col-span-2 space-y-4">
+                <div>
+                  <label class="block text-xs font-bold text-slate-500 mb-1">آدرس اینترنتی تصویر لوگو</label>
+                  <div class="flex space-x-2 space-x-reverse">
+                    <input type="text" id="set-logo-url" placeholder="/uploads/filename.png" class="flex-grow bg-slate-50 text-slate-800 text-xs font-bold py-2.5 px-3 rounded-xl border border-slate-100 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all">
+                    <button type="button" onclick="openGalleryPicker('set-logo-url')" class="bg-blue-50 hover:bg-blue-100 text-blue-600 text-xs font-black px-4 py-2.5 rounded-xl transition-all">🖼️ انتخاب از گالری</button>
+                  </div>
+                  <p class="text-[10px] text-blue-500 font-semibold mt-1.5">💡 ابعاد پیشنهادی: ۲۵۰×۲۵۰ پیکسل | فرمت: PNG شفاف (بدون پس‌زمینه)</p>
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-500 mb-2">یا آپلود مستقیم لوگو از سیستم</label>
+                  <input type="file" id="set-logo-file" accept="image/*" class="block w-full text-xs text-slate-500 file:ml-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-slate-900 file:text-white hover:file:bg-slate-800 file:cursor-pointer">
+                </div>
+              </div>
+            </div>
+
+            <!-- Password Change -->
+            <div class="pt-6 border-t border-slate-100">
+              <div class="max-w-md">
+                <label class="block text-xs font-bold text-slate-500 mb-2.5">تغییر رمز عبور ورود به پنل مدیریت</label>
+                <input type="password" id="set-password" placeholder="برای تغییر، رمز عبور جدید را وارد کنید" class="w-full bg-slate-50 text-slate-800 text-sm font-semibold py-3 px-4 rounded-xl border border-slate-100 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all">
+                <p class="text-[10px] text-slate-400 font-semibold mt-1.5">نکته: در صورت خالی بودن، رمز عبور تغییر نخواهد کرد.</p>
+              </div>
+            </div>
+
+            <!-- Submit -->
+            <div class="flex justify-end pt-4">
+              <button type="submit" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold py-3.5 px-8 rounded-xl transition-all shadow-md">
+                ذخیره تنظیمات عمومی
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- ================= SECTION: CATEGORIES ================= -->
+      <section id="sec-categories" class="admin-section fade-in hidden">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
+          <div>
+            <h1 class="text-2xl font-black text-slate-900">مدیریت دسته‌بندی‌ها</h1>
+            <p class="text-xs font-semibold text-slate-400 mt-1">افزودن، ویرایش و مرتب‌سازی گروه‌های منو</p>
+          </div>
+          <button id="add-category-btn" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-3 px-5 rounded-xl shadow-md transition-all flex items-center space-x-1.5 space-x-reverse">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            <span>افزودن دسته‌بندی جدید</span>
+          </button>
+        </div>
+
+        <!-- Category Grid -->
+        <div id="admin-categories-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          <!-- Dynamically generated categories inside admin panel -->
+        </div>
+      </section>
+
+      <!-- ================= SECTION: ITEMS ================= -->
+      <section id="sec-items" class="admin-section fade-in hidden">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
+          <div>
+            <h1 class="text-2xl font-black text-slate-900">مدیریت آیتم‌های منو</h1>
+            <p class="text-xs font-semibold text-slate-400 mt-1">ویرایش قیمت، تصاویر و توضیحات غذاها و نوشیدنی‌ها</p>
+          </div>
+          <button id="add-item-btn" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-3 px-5 rounded-xl shadow-md transition-all flex items-center space-x-1.5 space-x-reverse">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            <span>افزودن آیتم جدید منو</span>
+          </button>
+        </div>
+
+        <!-- Filter Controls -->
+        <div class="bg-white rounded-2xl border border-slate-100 p-4 mb-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div class="w-full sm:w-1/3">
+            <label class="block text-[10px] font-bold text-slate-400 mb-1.5">فیلتر بر اساس دسته‌بندی</label>
+            <select id="item-filter-category" class="w-full bg-slate-50 text-slate-700 text-xs font-bold py-2.5 px-3 rounded-lg border border-slate-100 outline-none">
+              <option value="all">همه دسته‌بندی‌ها</option>
+            </select>
+          </div>
+          <div class="w-full sm:w-1/2 relative">
+            <label class="block text-[10px] font-bold text-slate-400 mb-1.5">جستجو در منو</label>
+            <input type="text" id="item-filter-search" placeholder="جستجوی نام یا توضیحات آیتم..." class="w-full bg-slate-50 text-slate-700 text-xs font-bold py-2.5 pr-8 pl-3 rounded-lg border border-slate-100 outline-none">
+            <div class="absolute right-2.5 bottom-3 text-slate-400 pointer-events-none">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.637 10.637z" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Items list -->
+        <div id="admin-items-list" class="space-y-3">
+          <!-- Dynamically generated items -->
+        </div>
+      </section>
+
+      <!-- ================= SECTION: MEDIA MANAGER ================= -->
+      <section id="sec-media" class="admin-section fade-in hidden">
+        <div class="flex items-center justify-between mb-8">
+          <div>
+            <h1 class="text-2xl font-black text-slate-900">مدیریت رسانه (گالری تصاویر)</h1>
+            <p class="text-xs font-semibold text-slate-400 mt-1">مشاهده، کپی آدرس و حذف تمامی فایل‌های آپلود شده روی سرور</p>
+          </div>
+        </div>
+
+        <!-- Media Upload Box inside Media Gallery -->
+        <div class="bg-white rounded-3xl border border-slate-100 p-6 mb-8 shadow-sm">
+          <h3 class="text-xs font-extrabold text-slate-700 mb-4">آپلود سریع عکس جدید به گالری</h3>
+          <div class="flex flex-col sm:flex-row items-center space-y-3 sm:space-y-0 sm:space-x-4 sm:space-x-reverse">
+            <input type="file" id="media-direct-upload" accept="image/*" class="block w-full text-xs text-slate-500 file:ml-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-blue-50 file:text-blue-600 hover:file:bg-blue-100 file:cursor-pointer">
+            <button type="button" onclick="handleDirectMediaUpload()" class="w-full sm:w-auto bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold py-3 px-6 rounded-xl shadow transition-all shrink-0">آپلود در گالری</button>
+          </div>
+        </div>
+
+        <!-- Gallery Grid -->
+        <div id="media-gallery-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+          <!-- Dynamically populated files -->
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ================= MODAL: ADD/EDIT CATEGORY ================= -->
+  <div id="category-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
+    <div class="bg-white rounded-3xl w-full max-w-md shadow-2xl border border-slate-100 overflow-hidden transform scale-95 transition-transform duration-300">
+      <div class="bg-slate-900 p-5 text-white flex items-center justify-between">
+        <h3 id="cat-modal-title" class="text-base font-black">افزودن دسته‌بندی جدید</h3>
+        <button id="close-cat-modal" class="text-slate-400 hover:text-white transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <form id="category-form" class="p-6 space-y-4">
+        <input type="hidden" id="cat-id">
+        
+        <div>
+          <label class="block text-xs font-bold text-slate-500 mb-2">نام دسته‌بندی (مثال: برگر)</label>
+          <input type="text" id="cat-name" required class="w-full bg-slate-50 text-slate-800 text-xs font-bold py-2.5 px-3 rounded-xl border border-slate-100 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-500 mb-2">ترتیب نمایش (عدد کوچک‌تر اولویت دارد)</label>
+          <input type="number" id="cat-order" required class="w-full bg-slate-50 text-slate-800 text-xs font-bold py-2.5 px-3 rounded-xl border border-slate-100 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all">
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-500 mb-2">آدرس اینترنتی تصویر آیکون دسته‌بندی</label>
+          <div class="flex space-x-2 space-x-reverse">
+            <input type="text" id="cat-img-url" class="flex-grow bg-slate-50 text-slate-800 text-xs font-bold py-2.5 px-3 rounded-xl border border-slate-100 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all">
+            <button type="button" onclick="openGalleryPicker('cat-img-url')" class="bg-blue-50 hover:bg-blue-100 text-blue-600 text-xs font-black px-4 py-2.5 rounded-xl transition-all">🖼️ انتخاب از گالری</button>
+          </div>
+          <p class="text-[10px] text-blue-500 font-semibold mt-1.5">💡 ابعاد پیشنهادی: ۱۲۰×۱۲۰ پیکسل (مربعی) | فرمت: SVG یا PNG بدون پس‌زمینه</p>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-500 mb-2">یا آپلود آیکون جدید</label>
+          <input type="file" id="cat-img-file" accept="image/*" class="block w-full text-xs text-slate-500 file:ml-4 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-slate-900 file:text-white hover:file:bg-slate-800 file:cursor-pointer">
+        </div>
+
+        <div class="flex space-x-2 space-x-reverse pt-4">
+          <button type="submit" class="flex-grow bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-3 rounded-xl transition-all shadow-md">ثبت اطلاعات</button>
+          <button type="button" id="cancel-cat-modal" class="bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold py-3 px-6 rounded-xl transition-all">انصراف</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: ADD/EDIT ITEM ================= -->
+  <div id="item-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
+    <div class="bg-white rounded-3xl w-full max-w-lg shadow-2xl border border-slate-100 overflow-hidden transform scale-95 transition-transform duration-300">
+      <div class="bg-slate-900 p-5 text-white flex items-center justify-between">
+        <h3 id="item-modal-title" class="text-base font-black">افزودن آیتم جدید</h3>
+        <button id="close-item-modal" class="text-slate-400 hover:text-white transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <form id="item-form" class="p-6 space-y-4">
+        <input type="hidden" id="item-id">
+        
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-500 mb-2">نام آیتم (مثال: پیتزا پپرونی)</label>
+            <input type="text" id="item-name" required class="w-full bg-slate-50 text-slate-800 text-xs font-bold py-2.5 px-3 rounded-xl border border-slate-100 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-500 mb-2">دسته‌بندی مربوطه</label>
+            <select id="item-category" required class="w-full bg-slate-50 text-slate-800 text-xs font-bold py-2.5 px-3 rounded-xl border border-slate-100 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all">
+              <!-- Dynamically populated options -->
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-500 mb-2">قیمت (مثال: 366,000)</label>
+            <input type="text" id="item-price" required class="w-full bg-slate-50 text-slate-800 text-xs font-bold py-2.5 px-3 rounded-xl border border-slate-100 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-500 mb-2">ترتیب نمایش (اولویت)</label>
+            <input type="number" id="item-order" required class="w-full bg-slate-50 text-slate-800 text-xs font-bold py-2.5 px-3 rounded-xl border border-slate-100 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-500 mb-2">توضیحات و ترکیبات آیتم</label>
+          <textarea id="item-desc" rows="2" class="w-full bg-slate-50 text-slate-800 text-xs font-bold py-2.5 px-3 rounded-xl border border-slate-100 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all resize-none"></textarea>
+        </div>
+
+        <div class="grid grid-cols-3 gap-4 pt-2 border-t border-slate-100">
+          <div class="col-span-1 bg-slate-50 rounded-xl p-2 flex items-center justify-center border border-slate-200">
+            <img id="item-img-preview" src="" alt="preview" class="max-w-full max-h-16 object-cover rounded-lg hidden">
+            <span id="item-img-placeholder" class="text-[10px] text-slate-400 font-bold">بدون تصویر</span>
+          </div>
+          <div class="col-span-2 space-y-3">
+            <div>
+              <label class="block text-[10px] font-bold text-slate-500 mb-1">آدرس تصویر وب (URL)</label>
+              <div class="flex space-x-2 space-x-reverse">
+                <input type="text" id="item-img-url" class="flex-grow bg-slate-50 text-slate-800 text-xs font-bold py-2 px-3 rounded-xl border border-slate-100 outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all">
+                <button type="button" onclick="openGalleryPicker('item-img-url')" class="bg-blue-50 hover:bg-blue-100 text-blue-600 text-xs font-black px-4 py-2.5 rounded-xl transition-all shrink-0">🖼️ گالری</button>
+              </div>
+              <p class="text-[10px] text-blue-500 font-semibold mt-1">💡 ابعاد پیشنهادی: ۴۰۰×۴۰۰ پیکسل (مربعی) | فرمت: JPG یا WebP باکیفیت</p>
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold text-slate-500 mb-1">یا آپلود فایل مستقیم</label>
+              <input type="file" id="item-img-file" accept="image/*" class="block w-full text-[10px] text-slate-500 file:ml-2 file:py-1.5 file:px-2.5 file:rounded-lg file:border-0 file:text-[10px] file:font-bold file:bg-slate-900 file:text-white hover:file:bg-slate-800 file:cursor-pointer">
+            </div>
+          </div>
+        </div>
+
+        <div class="flex space-x-2 space-x-reverse pt-4 border-t border-slate-100">
+          <button type="submit" class="flex-grow bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-3 rounded-xl transition-all shadow-md">ثبت اطلاعات آیتم</button>
+          <button type="button" id="cancel-item-modal" class="bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold py-3 px-6 rounded-xl transition-all">انصراف</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= GALLERY PICKER DIALOG ================= -->
+  <div id="gallery-picker-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
+    <div class="bg-white rounded-3xl w-full max-w-2xl h-[550px] shadow-2xl border border-slate-100 overflow-hidden transform scale-95 transition-transform duration-300 flex flex-col">
+      <div class="bg-slate-900 p-5 text-white flex items-center justify-between shrink-0">
+        <h3 class="text-sm font-black flex items-center space-x-2 space-x-reverse">
+          <span>🖼️</span>
+          <span>انتخاب تصویر از گالری سرور</span>
+        </h3>
+        <button onclick="closeGalleryPickerModal()" class="text-slate-400 hover:text-white transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Gallery Picker Body -->
+      <div id="gallery-picker-body" class="p-6 overflow-y-auto flex-grow bg-slate-50">
+        <div id="gallery-picker-loading" class="text-center py-12 text-slate-400 font-semibold">در حال بارگذاری تصاویر...</div>
+        <div id="gallery-picker-empty" class="text-center py-12 text-slate-400 font-semibold hidden">هنوز هیچ تصویری آپلود نشده است. یکی آپلود کنید!</div>
+        <div id="gallery-picker-grid" class="grid grid-cols-3 sm:grid-cols-4 gap-4 hidden">
+          <!-- Populated in JS -->
+        </div>
+      </div>
+
+      <div class="bg-slate-100 p-4 border-t border-slate-200 flex justify-end shrink-0">
+        <button onclick="closeGalleryPickerModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold py-2.5 px-6 rounded-xl transition-all">انصراف</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= LIGHTBOX PREVIEW MODAL ================= -->
+  <div id="lightbox-modal" class="fixed inset-0 bg-slate-900/90 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300" onclick="closeLightbox()">
+    <button class="absolute top-5 right-5 text-white/70 hover:text-white transition-colors" onclick="closeLightbox()">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-8 h-8">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+    <img id="lightbox-img" src="" alt="preview" class="max-w-full max-h-[85vh] object-contain rounded-2xl shadow-2xl transform scale-95 transition-transform duration-300" onclick="event.stopPropagation()">
+  </div>
+
+
+  <!-- JAVASCRIPT FOR ADMIN EXPERIENCE -->
+  <script>
+    // State
+    let categories = [];
+    let items = [];
+    let settings = {};
+    let uploads = []; // List of uploaded images
+    let token = localStorage.getItem('adminToken');
+    let currentTargetInputId = null; // Track which form input requested the image picker
+
+    // UI elements
+    const loginScreen = document.getElementById('login-screen');
+    const adminScreen = document.getElementById('admin-screen');
+    const loginForm = document.getElementById('login-form');
+    const loginPassword = document.getElementById('login-password');
+    const loginError = document.getElementById('login-error');
+
+    // Check authentication
+    function checkAuth() {
+      if (token) {
+        loginScreen.classList.add('hidden');
+        adminScreen.classList.remove('hidden');
+        loadAllData();
+      } else {
+        loginScreen.classList.remove('hidden');
+        adminScreen.classList.add('hidden');
+      }
+    }
+
+    // Login Submission
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const password = loginPassword.value;
+      
+      try {
+        const response = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok && data.success) {
+          token = data.token;
+          localStorage.setItem('adminToken', token);
+          loginError.classList.add('hidden');
+          loginPassword.value = '';
+          checkAuth();
+          showToast('ورود با موفقیت انجام شد.', 'success');
+        } else {
+          loginError.classList.remove('hidden');
+          loginError.textContent = data.error || 'رمز عبور اشتباه است.';
+        }
+      } catch (err) {
+        console.error(err);
+        loginError.classList.remove('hidden');
+        loginError.textContent = 'خطا در برقراری ارتباط با سرور.';
+      }
+    });
+
+    // Logout
+    document.getElementById('logout-btn').addEventListener('click', () => {
+      localStorage.removeItem('adminToken');
+      token = null;
+      checkAuth();
+      showToast('با موفقیت از سیستم خارج شدید.', 'info');
+    });
+
+    // API calls helper
+    async function apiFetch(url, options = {}) {
+      options.headers = options.headers || {};
+      options.headers['Authorization'] = token;
+      
+      const response = await fetch(url, options);
+      
+      if (response.status === 401) {
+        localStorage.removeItem('adminToken');
+        token = null;
+        checkAuth();
+        throw new Error('نشست شما منقضی شده است. لطفا مجددا وارد شوید.');
+      }
+      
+      return response;
+    }
+
+    // Load Data
+    async function loadAllData() {
+      try {
+        const response = await fetch('/api/data');
+        const data = await response.json();
+        
+        categories = data.categories || [];
+        items = data.items || [];
+        settings = data.settings || {};
+        
+        renderSettings();
+        renderCategories();
+        renderItems();
+        populateCategoryFiltersAndSelects();
+        await loadUploadedImages(); // Load gallery too
+      } catch (err) {
+        console.error(err);
+        showToast('خطا در دریافت اطلاعات از سرور.', 'error');
+      }
+    }
+
+    // Load Uploaded Images (Feature 3 API call)
+    async function loadUploadedImages() {
+      try {
+        const response = await apiFetch('/api/uploads');
+        if (response.ok) {
+          uploads = await response.json();
+          renderMediaGallery();
+        }
+      } catch (err) {
+        console.error('Error fetching uploads:', err);
+      }
+    }
+
+    // Show Custom Toast
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toast-msg');
+      const toastIcon = document.getElementById('toast-icon');
+      
+      toastMsg.textContent = message;
+      
+      if (type === 'success') {
+        toastIcon.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5 text-emerald-400">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        `;
+      } else if (type === 'error') {
+        toastIcon.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5 text-rose-500">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+          </svg>
+        `;
+      } else {
+        toastIcon.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5 text-blue-400">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 111.063.852l-.708 2.836a.75.75 0 001.063.852l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12v-.008z" />
+          </svg>
+        `;
+      }
+      
+      toast.classList.remove('-translate-y-20', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+      
+      setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('-translate-y-20', 'opacity-0');
+      }, 3000);
+    }
+
+    // Helper: Upload file to /api/upload
+    async function uploadImageFile(file) {
+      const formData = new FormData();
+      formData.append('image', file);
+      
+      const response = await apiFetch('/api/upload', {
+        method: 'POST',
+        body: formData
+      });
+      
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'خطا در آپلود عکس.');
+      return data.url;
+    }
+
+    // ================= SETTINGS FORM EXPERIENCE =================
+    function renderSettings() {
+      document.getElementById('set-title').value = settings.title || '';
+      document.getElementById('set-subtitle').value = settings.subtitle || '';
+      document.getElementById('set-desc').value = settings.description || '';
+      document.getElementById('set-logo-url').value = settings.logo || '';
+      
+      document.getElementById('set-phone').value = settings.phone || '';
+      document.getElementById('set-address').value = settings.address || '';
+      document.getElementById('set-credit').value = settings.credit || '';
+      
+      const previewImg = document.getElementById('logo-preview-img');
+      const placeholder = document.getElementById('logo-placeholder');
+      
+      if (settings.logo) {
+        previewImg.src = settings.logo;
+        previewImg.classList.remove('hidden');
+        placeholder.classList.add('hidden');
+      } else {
+        previewImg.classList.add('hidden');
+        placeholder.classList.remove('hidden');
+      }
+    }
+
+    // Logo input listener
+    document.getElementById('set-logo-url').addEventListener('input', (e) => {
+      const previewImg = document.getElementById('logo-preview-img');
+      const placeholder = document.getElementById('logo-placeholder');
+      if (e.target.value) {
+        previewImg.src = e.target.value;
+        previewImg.classList.remove('hidden');
+        placeholder.classList.add('hidden');
+      } else {
+        previewImg.classList.add('hidden');
+        placeholder.classList.remove('hidden');
+      }
+    });
+
+    document.getElementById('settings-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const title = document.getElementById('set-title').value;
+      const subtitle = document.getElementById('set-subtitle').value;
+      const description = document.getElementById('set-desc').value;
+      const logoUrlInput = document.getElementById('set-logo-url').value;
+      const fileInput = document.getElementById('set-logo-file');
+      const passwordInput = document.getElementById('set-password').value;
+      
+      const phone = document.getElementById('set-phone').value;
+      const address = document.getElementById('set-address').value;
+      const credit = document.getElementById('set-credit').value;
+      
+      try {
+        let logo = logoUrlInput;
+        
+        if (fileInput.files.length > 0) {
+          showToast('در حال آپلود لوگو...', 'info');
+          logo = await uploadImageFile(fileInput.files[0]);
+        }
+        
+        const body = { title, subtitle, description, logo, phone, address, credit };
+        if (passwordInput.trim()) {
+          body.adminPassword = passwordInput;
+        }
+        
+        const response = await apiFetch('/api/settings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok && result.success) {
+          settings = result.settings;
+          if (passwordInput.trim()) {
+            token = passwordInput;
+            localStorage.setItem('adminToken', token);
+          }
+          
+          fileInput.value = '';
+          renderSettings();
+          showToast('تنظیمات عمومی با موفقیت ذخیره شدند.', 'success');
+          await loadUploadedImages(); // update gallery
+        } else {
+          showToast(result.error || 'خطا در ثبت تنظیمات.', 'error');
+        }
+      } catch (err) {
+        console.error(err);
+        showToast(err.message || 'خطا در ثبت تنظیمات.', 'error');
+      }
+    });
+
+
+    // ================= CATEGORIES PANEL EXPERIENCE =================
+    function renderCategories() {
+      const grid = document.getElementById('admin-categories-grid');
+      grid.innerHTML = '';
+      
+      categories.forEach((cat) => {
+        const itemCard = document.createElement('div');
+        itemCard.className = 'bg-white rounded-3xl p-5 border border-slate-100 shadow-sm flex flex-col justify-between space-y-4';
+        
+        itemCard.innerHTML = `
+          <div class="flex items-center space-x-4 space-x-reverse">
+            <div class="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center p-2 border border-slate-100 overflow-hidden shrink-0">
+              <img src="${cat.image}" alt="${cat.name}" class="max-w-full max-h-full object-contain filter drop-shadow">
+            </div>
+            <div class="overflow-hidden">
+              <h3 class="text-sm font-extrabold text-slate-800 truncate">${cat.name}</h3>
+              <p class="text-[10px] text-slate-400 font-bold mt-1">ترتیب نمایش: ${cat.order || 0}</p>
+            </div>
+          </div>
+          
+          <div class="flex space-x-2 space-x-reverse pt-3 border-t border-slate-50">
+            <button onclick="openEditCategoryModal('${cat.id}')" class="flex-grow bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-bold py-2.5 rounded-xl transition-all">ویرایش</button>
+            <button onclick="deleteCategory('${cat.id}')" class="bg-rose-50 hover:bg-rose-100 text-rose-600 text-[11px] font-bold py-2.5 px-4 rounded-xl transition-all">حذف</button>
+          </div>
+        `;
+        
+        grid.appendChild(itemCard);
+      });
+    }
+
+    // Modal Control: Categories
+    const catModal = document.getElementById('category-modal');
+    const catForm = document.getElementById('category-form');
+    
+    document.getElementById('add-category-btn').addEventListener('click', () => {
+      document.getElementById('cat-modal-title').textContent = 'افزودن دسته‌بندی جدید';
+      document.getElementById('cat-id').value = '';
+      document.getElementById('cat-name').value = '';
+      document.getElementById('cat-order').value = categories.length + 1;
+      document.getElementById('cat-img-url').value = '';
+      document.getElementById('cat-img-file').value = '';
+      
+      openModal(catModal);
+    });
+    
+    function openEditCategoryModal(id) {
+      const cat = categories.find(c => c.id === id);
+      if (!cat) return;
+      
+      document.getElementById('cat-modal-title').textContent = `ویرایش دسته‌بندی: ${cat.name}`;
+      document.getElementById('cat-id').value = cat.id;
+      document.getElementById('cat-name').value = cat.name;
+      document.getElementById('cat-order').value = cat.order || 0;
+      document.getElementById('cat-img-url').value = cat.image || '';
+      document.getElementById('cat-img-file').value = '';
+      
+      openModal(catModal);
+    }
+    
+    async function deleteCategory(id) {
+      if (!confirm('آیا از حذف این دسته‌بندی اطمینان دارید؟ تمام غذاهای مربوط به این دسته نیز حذف خواهند شد!')) return;
+      
+      try {
+        const response = await apiFetch(`/api/categories/${id}`, { method: 'DELETE' });
+        const result = await response.json();
+        
+        if (response.ok) {
+          showToast(result.message || 'دسته‌بندی حذف شد.', 'success');
+          loadAllData();
+        } else {
+          showToast(result.error || 'خطا در حذف دسته‌بندی.', 'error');
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('خطا در ارتباط با سرور.', 'error');
+      }
+    }
+    
+    catForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const id = document.getElementById('cat-id').value;
+      const name = document.getElementById('cat-name').value;
+      const order = document.getElementById('cat-order').value;
+      const imageUrlInput = document.getElementById('cat-img-url').value;
+      const fileInput = document.getElementById('cat-img-file');
+      
+      try {
+        let image = imageUrlInput;
+        
+        if (fileInput.files.length > 0) {
+          showToast('در حال آپلود تصویر...', 'info');
+          image = await uploadImageFile(fileInput.files[0]);
+        }
+        
+        const payload = { name, order, image };
+        let url = '/api/categories';
+        let method = 'POST';
+        
+        if (id) {
+          url = `/api/categories/${id}`;
+          method = 'PUT';
+        }
+        
+        const response = await apiFetch(url, {
+          method,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        
+        if (response.ok) {
+          closeModal(catModal);
+          showToast('اطلاعات دسته‌بندی با موفقیت ذخیره شد.', 'success');
+          loadAllData();
+        } else {
+          const result = await response.json();
+          showToast(result.error || 'خطا در ذخیره‌سازی.', 'error');
+        }
+      } catch (err) {
+        console.error(err);
+        showToast(err.message || 'خطا در ذخیره‌سازی.', 'error');
+      }
+    });
+
+    document.getElementById('close-cat-modal').addEventListener('click', () => closeModal(catModal));
+    document.getElementById('cancel-cat-modal').addEventListener('click', () => closeModal(catModal));
+
+
+    // ================= ITEMS PANEL EXPERIENCE =================
+    function renderItems() {
+      const listContainer = document.getElementById('admin-items-list');
+      listContainer.innerHTML = '';
+      
+      const filterCategory = document.getElementById('item-filter-category').value;
+      const filterSearch = document.getElementById('item-filter-search').value.trim().toLowerCase();
+      
+      const filteredItems = items.filter(item => {
+        const matchesCategory = filterCategory === 'all' || item.categoryId === filterCategory;
+        const matchesSearch = !filterSearch || 
+          item.name.toLowerCase().includes(filterSearch) || 
+          (item.description && item.description.toLowerCase().includes(filterSearch));
+        return matchesCategory && matchesSearch;
+      });
+      
+      if (filteredItems.length === 0) {
+        listContainer.innerHTML = `
+          <div class="text-center py-12 text-slate-400 font-semibold bg-white rounded-3xl border border-slate-100 shadow-sm">
+            هیچ آیتمی مطابق فیلتر یافت نشد.
+          </div>
+        `;
+        return;
+      }
+      
+      filteredItems.forEach((item) => {
+        const cat = categories.find(c => c.id === item.categoryId);
+        const catName = cat ? cat.name : 'دسته‌بندی نشده';
+        
+        const itemRow = document.createElement('div');
+        itemRow.className = 'bg-white rounded-3xl p-4 border border-slate-100 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4';
+        
+        itemRow.innerHTML = `
+          <div class="flex items-center space-x-4 space-x-reverse w-full sm:w-auto">
+            <div class="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center overflow-hidden border border-slate-100 shrink-0">
+              <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover">
+            </div>
+            <div class="overflow-hidden">
+              <span class="bg-blue-50 text-blue-600 text-[9px] font-extrabold px-2 py-0.5 rounded-full mb-1 inline-block">${catName}</span>
+              <h3 class="text-sm font-extrabold text-slate-800 truncate">${item.name}</h3>
+              <p class="text-xs font-bold text-slate-500 mt-1">${formatPrice(item.price)}</p>
+            </div>
+          </div>
+          
+          <div class="flex items-center justify-between sm:justify-end space-x-4 space-x-reverse w-full sm:w-auto pt-3 sm:pt-0 border-t sm:border-0 border-slate-50">
+            <div class="text-left sm:text-right hidden md:block">
+              <p class="text-[10px] text-slate-400 font-bold">ترتیب: ${item.order || 0}</p>
+              <p class="text-[10px] text-slate-400 font-medium truncate max-w-[200px] mt-0.5">${item.description || 'بدون توضیحات'}</p>
+            </div>
+            <div class="flex space-x-2 space-x-reverse w-full sm:w-auto">
+              <button onclick="openEditItemModal('${item.id}')" class="flex-grow sm:flex-none bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-2.5 px-5 rounded-xl transition-all">ویرایش</button>
+              <button onclick="deleteItem('${item.id}')" class="bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold py-2.5 px-4 rounded-xl transition-all">حذف</button>
+            </div>
+          </div>
+        `;
+        
+        listContainer.appendChild(itemRow);
+      });
+    }
+
+    // Modal Control: Items
+    const itemModal = document.getElementById('item-modal');
+    const itemForm = document.getElementById('item-form');
+    
+    document.getElementById('add-item-btn').addEventListener('click', () => {
+      document.getElementById('item-modal-title').textContent = 'افزودن آیتم جدید به منو';
+      document.getElementById('item-id').value = '';
+      document.getElementById('item-name').value = '';
+      document.getElementById('item-category').value = categories[0] ? categories[0].id : '';
+      document.getElementById('item-price').value = '';
+      document.getElementById('item-order').value = items.length + 1;
+      document.getElementById('item-desc').value = '';
+      document.getElementById('item-img-url').value = '';
+      document.getElementById('item-img-file').value = '';
+      
+      const preview = document.getElementById('item-img-preview');
+      const placeholder = document.getElementById('item-img-placeholder');
+      preview.classList.add('hidden');
+      placeholder.classList.remove('hidden');
+      
+      openModal(itemModal);
+    });
+    
+    function openEditItemModal(id) {
+      const item = items.find(i => i.id === id);
+      if (!item) return;
+      
+      document.getElementById('item-modal-title').textContent = `ویرایش آیتم: ${item.name}`;
+      document.getElementById('item-id').value = item.id;
+      document.getElementById('item-name').value = item.name;
+      document.getElementById('item-category').value = item.categoryId;
+      document.getElementById('item-price').value = item.price;
+      document.getElementById('item-order').value = item.order || 0;
+      document.getElementById('item-desc').value = item.description || '';
+      document.getElementById('item-img-url').value = item.image || '';
+      document.getElementById('item-img-file').value = '';
+      
+      const preview = document.getElementById('item-img-preview');
+      const placeholder = document.getElementById('item-img-placeholder');
+      if (item.image) {
+        preview.src = item.image;
+        preview.classList.remove('hidden');
+        placeholder.classList.add('hidden');
+      } else {
+        preview.classList.add('hidden');
+        placeholder.classList.remove('hidden');
+      }
+      
+      openModal(itemModal);
+    }
+
+    // Item image preview listener
+    document.getElementById('item-img-url').addEventListener('input', (e) => {
+      const preview = document.getElementById('item-img-preview');
+      const placeholder = document.getElementById('item-img-placeholder');
+      if (e.target.value) {
+        preview.src = e.target.value;
+        preview.classList.remove('hidden');
+        placeholder.classList.add('hidden');
+      } else {
+        preview.classList.add('hidden');
+        placeholder.classList.remove('hidden');
+      }
+    });
+
+    async function deleteItem(id) {
+      if (!confirm('آیا از حذف این غذا/نوشیدنی اطمینان دارید؟')) return;
+      
+      try {
+        const response = await apiFetch(`/api/items/${id}`, { method: 'DELETE' });
+        const result = await response.json();
+        
+        if (response.ok) {
+          showToast(result.message || 'آیتم با موفقیت حذف شد.', 'success');
+          loadAllData();
+        } else {
+          showToast(result.error || 'خطا در حذف آیتم.', 'error');
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('خطا در ارتباط با سرور.', 'error');
+      }
+    }
+
+    itemForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const id = document.getElementById('item-id').value;
+      const name = document.getElementById('item-name').value;
+      const categoryId = document.getElementById('item-category').value;
+      const price = document.getElementById('item-price').value;
+      const order = document.getElementById('item-order').value;
+      const description = document.getElementById('item-desc').value;
+      const imageUrlInput = document.getElementById('item-img-url').value;
+      const fileInput = document.getElementById('item-img-file');
+      
+      try {
+        let image = imageUrlInput;
+        
+        if (fileInput.files.length > 0) {
+          showToast('در حال آپلود عکس...', 'info');
+          image = await uploadImageFile(fileInput.files[0]);
+        }
+        
+        const payload = { name, categoryId, price, order, description, image };
+        let url = '/api/items';
+        let method = 'POST';
+        
+        if (id) {
+          url = `/api/items/${id}`;
+          method = 'PUT';
+        }
+        
+        const response = await apiFetch(url, {
+          method,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        
+        if (response.ok) {
+          closeModal(itemModal);
+          showToast('اطلاعات غذا با موفقیت ثبت شد.', 'success');
+          loadAllData();
+        } else {
+          const result = await response.json();
+          showToast(result.error || 'خطا در ثبت اطلاعات.', 'error');
+        }
+      } catch (err) {
+        console.error(err);
+        showToast(err.message || 'خطا در ثبت اطلاعات.', 'error');
+      }
+    });
+
+    document.getElementById('close-item-modal').addEventListener('click', () => closeModal(itemModal));
+    document.getElementById('cancel-item-modal').addEventListener('click', () => closeModal(itemModal));
+
+
+    // ================= MEDIA MANAGER & GALLERY PICKER =================
+
+    // Render Media Gallery (Main Gallery tab)
+    function renderMediaGallery() {
+      const container = document.getElementById('media-gallery-grid');
+      container.innerHTML = '';
+
+      if (uploads.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full text-center py-12 text-slate-400 font-semibold bg-white rounded-3xl border border-dashed border-slate-200">
+            هنوز هیچ رسانه‌ای آپلود نکرده‌اید.
+          </div>
+        `;
+        return;
+      }
+
+      uploads.forEach((file) => {
+        const itemCard = document.createElement('div');
+        itemCard.className = 'bg-white rounded-3xl p-4 border border-slate-100 shadow-sm flex flex-col justify-between space-y-3 relative group overflow-hidden';
+        
+        const sizeFormatted = (file.size / 1024).toFixed(1) + ' KB';
+
+        itemCard.innerHTML = `
+          <div class="w-full h-32 bg-slate-50 rounded-2xl overflow-hidden border border-slate-100 relative cursor-pointer" onclick="openLightbox('${file.url}')">
+            <img src="${file.url}" alt="${file.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+            <div class="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+              <span class="text-white text-xs font-bold bg-slate-900/80 px-3 py-1.5 rounded-xl">🔍 پیش‌نمایش بزرگ</span>
+            </div>
+          </div>
+
+          <div class="space-y-1.5">
+            <p class="text-[10px] font-bold text-slate-700 truncate" title="${file.name}">${file.name}</p>
+            <p class="text-[9px] font-semibold text-slate-400">${sizeFormatted}</p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-1.5 pt-2 border-t border-slate-50 shrink-0">
+            <button onclick="copyToClipboard('${file.url}')" class="bg-blue-50 hover:bg-blue-100 text-blue-600 text-[10px] font-black py-2 rounded-xl transition-all">📋 کپی آدرس</button>
+            <button onclick="deleteMediaFile('${file.name}')" class="bg-rose-50 hover:bg-rose-100 text-rose-600 text-[10px] font-black py-2 rounded-xl transition-all">🗑️ حذف</button>
+          </div>
+        `;
+        container.appendChild(itemCard);
+      });
+    }
+
+    // Direct Media upload inside Media manager tab
+    async function handleDirectMediaUpload() {
+      const fileInput = document.getElementById('media-direct-upload');
+      if (fileInput.files.length === 0) {
+        showToast('لطفا یک فایل تصویر انتخاب کنید.', 'error');
+        return;
+      }
+
+      try {
+        showToast('در حال آپلود عکس...', 'info');
+        const url = await uploadImageFile(fileInput.files[0]);
+        fileInput.value = '';
+        showToast('تصویر با موفقیت در گالری سرور آپلود شد.', 'success');
+        await loadUploadedImages(); // reload gallery
+      } catch (err) {
+        console.error(err);
+        showToast(err.message || 'خطا در آپلود فایل.', 'error');
+      }
+    }
+
+    function copyToClipboard(text) {
+      const absUrl = window.location.origin + text;
+      navigator.clipboard.writeText(absUrl).then(() => {
+        showToast('آدرس تصویر با موفقیت کپی شد.', 'success');
+      }, () => {
+        showToast('خطا در کپی آدرس.', 'error');
+      });
+    }
+
+    // Delete Media file from server
+    async function deleteMediaFile(filename) {
+      if (!confirm('آیا از حذف دائم این تصویر از سرور اطمینان دارید؟ اگر این عکس در بخش‌ها یا غذاها استفاده شده باشد، برداشته خواهد شد.')) return;
+
+      try {
+        const response = await apiFetch(`/api/uploads/${filename}`, { method: 'DELETE' });
+        const result = await response.json();
+
+        if (response.ok) {
+          showToast(result.message || 'فایل حذف شد.', 'success');
+          await loadUploadedImages(); // reload
+        } else {
+          showToast(result.error || 'خطا در حذف فایل.', 'error');
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('خطا در ارتباط با سرور.', 'error');
+      }
+    }
+
+    // ================= GALLERY PICKER FOR FORMS =================
+    const galleryModal = document.getElementById('gallery-picker-modal');
+
+    async function openGalleryPicker(targetInputId) {
+      currentTargetInputId = targetInputId;
+      openModal(galleryModal);
+      
+      // Force fetching the latest uploaded images list first! (Fixes empty state issue)
+      const loading = document.getElementById('gallery-picker-loading');
+      const empty = document.getElementById('gallery-picker-empty');
+      const grid = document.getElementById('gallery-picker-grid');
+      
+      loading.classList.remove('hidden');
+      empty.classList.add('hidden');
+      grid.classList.add('hidden');
+      
+      try {
+        await loadUploadedImages(); // Fresh fetch from backend!
+        renderGalleryPickerGrid();
+      } catch (err) {
+        console.error(err);
+        loading.textContent = 'خطا در دریافت تصاویر از سرور.';
+      }
+    }
+
+    function closeGalleryPickerModal() {
+      closeModal(galleryModal);
+      currentTargetInputId = null;
+    }
+
+    // Render picker modal's inside grid
+    function renderGalleryPickerGrid() {
+      const loading = document.getElementById('gallery-picker-loading');
+      const empty = document.getElementById('gallery-picker-empty');
+      const grid = document.getElementById('gallery-picker-grid');
+
+      loading.classList.add('hidden');
+      empty.classList.add('hidden');
+      grid.classList.add('hidden');
+
+      if (uploads.length === 0) {
+        empty.classList.remove('hidden');
+        return;
+      }
+
+      grid.innerHTML = '';
+      uploads.forEach((file) => {
+        const item = document.createElement('div');
+        item.className = 'bg-white rounded-2xl p-2 border border-slate-100 hover:border-blue-400 hover:shadow-md cursor-pointer transition-all flex flex-col items-center space-y-2';
+        item.innerHTML = `
+          <div class="w-full h-24 bg-slate-50 rounded-xl overflow-hidden border border-slate-50 shrink-0">
+            <img src="${file.url}" alt="${file.name}" class="w-full h-full object-cover">
+          </div>
+          <span class="text-[9px] font-bold text-slate-500 truncate w-full text-center" title="${file.name}">${file.name}</span>
+        `;
+        item.addEventListener('click', () => selectImageFromPicker(file.url));
+        grid.appendChild(item);
+      });
+
+      grid.classList.remove('hidden');
+    }
+
+    // Select the image and inject back to target input
+    function selectImageFromPicker(url) {
+      if (currentTargetInputId) {
+        const input = document.getElementById(currentTargetInputId);
+        if (input) {
+          input.value = url;
+          input.dispatchEvent(new Event('input'));
+        }
+      }
+      closeGalleryPickerModal();
+      showToast('تصویر با موفقیت از گالری سرور انتخاب شد.', 'success');
+    }
+
+    // ================= LIGHTBOX PREVIEW MODAL =================
+    function openLightbox(url) {
+      const modal = document.getElementById('lightbox-modal');
+      const img = document.getElementById('lightbox-img');
+      img.src = url;
+
+      modal.classList.remove('hidden');
+      void modal.offsetWidth;
+      modal.classList.remove('opacity-0');
+      img.classList.remove('scale-95');
+      img.classList.add('scale-100');
+    }
+
+    function closeLightbox() {
+      const modal = document.getElementById('lightbox-modal');
+      const img = document.getElementById('lightbox-img');
+      modal.classList.add('opacity-0');
+      img.classList.remove('scale-100');
+      img.classList.add('scale-95');
+      setTimeout(() => {
+        modal.classList.add('hidden');
+      }, 300);
+    }
+
+
+    // ================= HELPERS & SETUP =================
+
+    // Open modal with smooth animation
+    function openModal(modal) {
+      modal.classList.remove('hidden');
+      void modal.offsetWidth;
+      modal.classList.remove('opacity-0');
+      modal.querySelector('div').classList.remove('scale-95');
+      modal.querySelector('div').classList.add('scale-100');
+    }
+    
+    // Close modal with smooth animation
+    function closeModal(modal) {
+      modal.classList.add('opacity-0');
+      modal.querySelector('div').classList.remove('scale-100');
+      modal.querySelector('div').classList.add('scale-95');
+      setTimeout(() => {
+        modal.classList.add('hidden');
+      }, 300);
+    }
+
+    // Dropdown and search filters setup
+    function populateCategoryFiltersAndSelects() {
+      const filterSelect = document.getElementById('item-filter-category');
+      const itemFormSelect = document.getElementById('item-category');
+      
+      filterSelect.innerHTML = '<option value="all">همه دسته‌بندی‌ها</option>';
+      itemFormSelect.innerHTML = '';
+      
+      categories.forEach(cat => {
+        const opt1 = document.createElement('option');
+        opt1.value = cat.id;
+        opt1.textContent = cat.name;
+        filterSelect.appendChild(opt1);
+        
+        const opt2 = document.createElement('option');
+        opt2.value = cat.id;
+        opt2.textContent = cat.name;
+        itemFormSelect.appendChild(opt2);
+      });
+    }
+
+    document.getElementById('item-filter-category').addEventListener('change', renderItems);
+    document.getElementById('item-filter-search').addEventListener('input', renderItems);
+
+    // Sidebar navigation logic (Tabs)
+    const tabs = {
+      'tab-settings-btn': 'sec-settings',
+      'tab-categories-btn': 'sec-categories',
+      'tab-items-btn': 'sec-items',
+      'tab-media-btn': 'sec-media'
+    };
+
+    Object.keys(tabs).forEach(btnId => {
+      document.getElementById(btnId).addEventListener('click', async (e) => {
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+          btn.classList.remove('text-white', 'bg-slate-800');
+          btn.classList.add('text-slate-400', 'hover:bg-slate-800', 'hover:text-white');
+        });
+        
+        const clickedBtn = document.getElementById(btnId);
+        clickedBtn.classList.remove('text-slate-400', 'hover:bg-slate-800', 'hover:text-white');
+        clickedBtn.classList.add('text-white', 'bg-slate-800');
+        
+        document.querySelectorAll('.admin-section').forEach(sec => {
+          sec.classList.add('hidden');
+        });
+        
+        document.getElementById(tabs[btnId]).classList.remove('hidden');
+
+        // Force reload uploaded images when explicitly opening the media tab! (Fixes blank state on click)
+        if (btnId === 'tab-media-btn') {
+          showToast('در حال بروزرسانی گالری...', 'info');
+          await loadUploadedImages();
+        }
+      });
+    });
+
+    // Pricing format helper
+    function formatPrice(price) {
+      if (!price) return '';
+      let clean = price.toString().replace(/[^\d,]/g, '');
+      if (!clean.includes(',') && !isNaN(clean) && clean !== '') {
+        clean = Number(clean).toLocaleString('en-US');
+      }
+      return toPersianDigits(clean || price) + ' تومان';
+    }
+
+    // Persian Digits
+    function toPersianDigits(num) {
+      if (num === null || num === undefined) return '';
+      const id = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+      return num.toString().replace(/[0-9]/g, function (w) {
+        return id[+w];
+      });
+    }
+
+    // Initial check
+    window.addEventListener('DOMContentLoaded', checkAuth);
+  </script>
+</body>
+</html>

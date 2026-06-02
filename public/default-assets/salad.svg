@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="100" height="100">
+    <!-- Salad Bowl with Greens -->
+    <path d="M10 28c0 0 4 12 22 12s22-12 22-12H10z" fill="#E0F7FA" stroke="#333" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M14 28c0 10 36 10 36 0" fill="#FFF" opacity="0.5"/>
+    <circle cx="16" cy="22" r="5" fill="#81C784" stroke="#333" stroke-width="2"/>
+    <circle cx="24" cy="20" r="6" fill="#4CAF50" stroke="#333" stroke-width="2.5"/>
+    <circle cx="34" cy="18" r="7" fill="#2E7D32" stroke="#333" stroke-width="2.5"/>
+    <circle cx="44" cy="21" r="5.5" fill="#4CAF50" stroke="#333" stroke-width="2.5"/>
+    <circle cx="50" cy="24" r="4" fill="#81C784" stroke="#333" stroke-width="2"/>
+    <!-- Tomato slice -->
+    <circle cx="30" cy="25" r="5" fill="#E53935" stroke="#333" stroke-width="2"/>
+    <circle cx="30" cy="25" r="2.5" fill="#FF8A80"/>
+    <!-- Cucumber slice -->
+    <circle cx="40" cy="26" r="4.5" fill="#81C784" stroke="#333" stroke-width="2"/>
+  </svg>

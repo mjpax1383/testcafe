@@ -1,0 +1,172 @@
+{
+  "settings": {
+    "title": "Moslem",
+    "subtitle": "Cafe & Restaurant",
+    "description": "test subject",
+    "logo": "",
+    "phone": "09929812338",
+    "address": "کیانپارس",
+    "credit": "ساخته شده توسط سید مسلم ال جابر",
+    "adminPassword": "admin"
+  },
+  "categories": [
+    {
+      "id": "cat-hot-drinks",
+      "name": "نوشیدنی گرم",
+      "image": "/uploads/1780418448584-68823497.png",
+      "order": 1
+    },
+    {
+      "id": "cat-cold-drinks",
+      "name": "نوشیدنی سرد",
+      "image": "/uploads/1780418178096-992262924.png",
+      "order": 2
+    },
+    {
+      "id": "cat-shake",
+      "name": "شیک",
+      "image": "/uploads/1780418322108-439843851.png",
+      "order": 3
+    },
+    {
+      "id": "cat-cake",
+      "name": "کیک",
+      "image": "/uploads/1780418111985-400291744.png",
+      "order": 4
+    },
+    {
+      "id": "cat-pizza",
+      "name": "پیتزا",
+      "image": "/uploads/1780418061274-733591692.png",
+      "order": 5
+    },
+    {
+      "id": "cat-salad",
+      "name": "سالاد",
+      "image": "/uploads/1780418417617-45025493.png",
+      "order": 6
+    },
+    {
+      "id": "cat-pasta",
+      "name": "پاستا",
+      "image": "/uploads/1780418396118-300954075.png",
+      "order": 7
+    },
+    {
+      "id": "cat-sandwich",
+      "name": "ساندویچ",
+      "image": "/uploads/1780417946690-759790891.png",
+      "order": 8
+    },
+    {
+      "id": "cat-fries",
+      "name": "سیب زمینی",
+      "image": "/uploads/1780418123486-169625159.png",
+      "order": 10
+    },
+    {
+      "id": "cat-hot-bar",
+      "name": "هات بار",
+      "image": "/uploads/1780418448584-68823497.png",
+      "order": 11
+    },
+    {
+      "id": "cat-tea",
+      "name": "چایی",
+      "image": "/uploads/1780418468647-186792279.png",
+      "order": 12
+    },
+    {
+      "id": "cat-juice",
+      "name": "آبمیوه",
+      "image": "/uploads/1780418512075-792965049.png",
+      "order": 15
+    },
+    {
+      "id": "cat-drinks",
+      "name": "نوشیدنی",
+      "image": "/uploads/1780418802230-125281420.png",
+      "order": 16
+    },
+    {
+      "id": "cat-breakfast",
+      "name": "صبحانه",
+      "image": "/uploads/1780418774358-327205982.png",
+      "order": 17
+    }
+  ],
+  "items": [
+    {
+      "id": "item-1",
+      "categoryId": "cat-cold-drinks",
+      "name": "آیس لاته کلاسیک",
+      "price": "366,000",
+      "description": "کارامل، فندق، وانیل، نارگیل",
+      "image": "https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&q=80&w=400",
+      "order": 1
+    },
+    {
+      "id": "item-2",
+      "categoryId": "cat-cold-drinks",
+      "name": "آیس آمریکانو",
+      "price": "278,000",
+      "description": "آب سودا",
+      "image": "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&q=80&w=400",
+      "order": 2
+    },
+    {
+      "id": "item-3",
+      "categoryId": "cat-cold-drinks",
+      "name": "آیس آمریکانو لمون",
+      "price": "328,000",
+      "description": "قهوه اسپرسو، لیمو ترش تازه، آب گازدار",
+      "image": "https://images.unsplash.com/photo-1513530534585-c7b1394c6d51?auto=format&fit=crop&q=80&w=400",
+      "order": 3
+    },
+    {
+      "id": "item-4",
+      "categoryId": "cat-cold-drinks",
+      "name": "آیس لاته کره بادام زمینی",
+      "price": "407,000",
+      "description": "کره بادام زمینی، شیر، اسپرسو، سس کارامل",
+      "image": "https://images.unsplash.com/photo-1572490122747-3968b75cc699?auto=format&fit=crop&q=80&w=400",
+      "order": 4
+    },
+    {
+      "id": "item-5",
+      "categoryId": "cat-cold-drinks",
+      "name": "آیس پینک پانتر",
+      "price": "376,000",
+      "description": "قهوه، شیر، توت فرنگی",
+      "image": "https://images.unsplash.com/photo-1497515114629-f71d768fd07c?auto=format&fit=crop&q=80&w=400",
+      "order": 5
+    },
+    {
+      "id": "item-6",
+      "categoryId": "cat-cold-drinks",
+      "name": "آیس لاته ماچا",
+      "price": "392,000",
+      "description": "پودر ماچا گرید تشریفاتی، شیر، سیروپ وانیل",
+      "image": "https://images.unsplash.com/photo-1536256263959-770b48d82b0a?auto=format&fit=crop&q=80&w=400",
+      "order": 6
+    },
+    {
+      "id": "item-9",
+      "categoryId": "cat-hot-drinks",
+      "name": "اسپرسو دوبل",
+      "price": "180,000",
+      "description": "۱۰۰٪ دان عربیکا",
+      "image": "https://images.unsplash.com/photo-1510972527409-cef5e0aa067f?auto=format&fit=crop&q=80&w=400",
+      "order": 1
+    },
+    {
+      "id": "item-10",
+      "categoryId": "cat-hot-drinks",
+      "name": "لاته آرت",
+      "price": "240,000",
+      "description": "اسپرسو، شیر فوم‌دار",
+      "image": "https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&q=80&w=400",
+      "order": 2
+    }
+  ]
+}

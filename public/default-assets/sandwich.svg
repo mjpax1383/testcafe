@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="100" height="100">
+    <!-- Sandwich / Sub -->
+    <path d="M8 32c0-8 8-10 24-10s24 2 24 10H8z" fill="#F4A460" stroke="#333" stroke-width="3" stroke-linejoin="round"/>
+    <!-- Fillings (Lettuce, Tomato, Cheese) -->
+    <path d="M6 32c3-3 6 0 9-3s6 3 9 0s6 3 9 0s6 3 9 0s6 3 9 0" fill="none" stroke="#4CAF50" stroke-width="4" stroke-linecap="round"/>
+    <path d="M12 34h40" stroke="#E53935" stroke-width="4" stroke-linecap="round"/>
+    <path d="M15 32l6 4h10l6-4h10l6 4" fill="none" stroke="#FFD54F" stroke-width="3"/>
+    <!-- Bottom bread -->
+    <path d="M8 35c0 8 8 10 24 10s24-2 24-10H8z" fill="#D2691E" stroke="#333" stroke-width="3" stroke-linejoin="round"/>
+  </svg>

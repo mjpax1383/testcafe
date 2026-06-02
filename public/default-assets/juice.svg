@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="100" height="100">
+    <!-- Juice Glass -->
+    <path d="M18 16h28l-4 38H22z" fill="#FFF" stroke="#333" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M19 24h26l-3 28H22z" fill="#FFA726"/>
+    <!-- Straw -->
+    <path d="M30 36V8l10-4" fill="none" stroke="#E53935" stroke-width="3" stroke-linecap="round"/>
+    <!-- Orange Slice -->
+    <path d="M42 22a6 6 0 1 1-6-6" fill="none" stroke="#FFA726" stroke-width="2"/>
+  </svg>

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="100" height="100">
+    <!-- Cake Slice / Plate -->
+    <path d="M10 50h44v4H10v-4z" fill="#EAD8C0" stroke="#333" stroke-width="3" stroke-linejoin="round"/>
+    <!-- Cake body -->
+    <path d="M14 50V26l36 10v14H14z" fill="#CD853F" stroke="#333" stroke-width="3" stroke-linejoin="round"/>
+    <!-- Layers -->
+    <path d="M14 38l36 10" stroke="#333" stroke-width="3"/>
+    <path d="M14 38l36 10" stroke="#FFF" stroke-width="2" fill="none"/>
+    <!-- Cream frosting on top -->
+    <path d="M14 26s8 4 18 1s18 9 18 9v3s-10-8-18-9s-18-4-18-4v-1z" fill="#FFF" stroke="#333" stroke-width="2"/>
+    <!-- Cherry on top -->
+    <circle cx="30" cy="20" r="4" fill="#FF0000" stroke="#333" stroke-width="2"/>
+    <path d="M32 17c2-4 6-4 8-2" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+  </svg>
