@@ -1,4 +1,4 @@
-# Dockerfile for deploying Weekend Cafe Menu on Darkoob / Hamravesh
+# Dockerfile for deploying moslem Cafe Menu on Darkoob / Hamravesh
 FROM node:20-alpine
 
 # Set working directory inside container

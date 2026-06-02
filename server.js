@@ -82,7 +82,7 @@ function readData() {
       }
     } else {
       // Create empty DB template
-      fs.writeFileSync(DB_FILE, JSON.stringify({ settings: { title: "Weekend", adminPassword: "admin" }, categories: [], items: [] }, null, 2));
+      fs.writeFileSync(DB_FILE, JSON.stringify({ settings: { title: "moslem", adminPassword: "admin" }, categories: [], items: [] }, null, 2));
     }
   }
 
