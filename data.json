@@ -1,98 +1,122 @@
 {
   "settings": {
-    "title": "Moslem",
+    "title": "Weekend",
     "subtitle": "Cafe & Restaurant",
-    "description": "test subject",
+    "description": "The House Of Mood!",
     "logo": "",
-    "phone": "09929812338",
-    "address": "کیانپارس",
-    "credit": "ساخته شده توسط سید مسلم ال جابر",
+    "phone": "09035116886",
+    "address": "کیانپارس، بین میهن و یک",
+    "credit": "ساخته شده توسط آراد آذرپناه",
     "adminPassword": "admin"
   },
   "categories": [
     {
       "id": "cat-hot-drinks",
       "name": "نوشیدنی گرم",
-      "image": "/uploads/1780418448584-68823497.png",
+      "image": "/default-assets/hot-drinks.svg",
       "order": 1
     },
     {
       "id": "cat-cold-drinks",
       "name": "نوشیدنی سرد",
-      "image": "/uploads/1780418178096-992262924.png",
+      "image": "/default-assets/cold-drinks.svg",
       "order": 2
     },
     {
       "id": "cat-shake",
       "name": "شیک",
-      "image": "/uploads/1780418322108-439843851.png",
+      "image": "/default-assets/shake.svg",
       "order": 3
     },
     {
       "id": "cat-cake",
       "name": "کیک",
-      "image": "/uploads/1780418111985-400291744.png",
+      "image": "/default-assets/cake.svg",
       "order": 4
     },
     {
       "id": "cat-pizza",
       "name": "پیتزا",
-      "image": "/uploads/1780418061274-733591692.png",
+      "image": "/default-assets/pizza.svg",
       "order": 5
     },
     {
       "id": "cat-salad",
       "name": "سالاد",
-      "image": "/uploads/1780418417617-45025493.png",
+      "image": "/default-assets/salad.svg",
       "order": 6
     },
     {
       "id": "cat-pasta",
       "name": "پاستا",
-      "image": "/uploads/1780418396118-300954075.png",
+      "image": "/default-assets/pasta.svg",
       "order": 7
     },
     {
       "id": "cat-sandwich",
       "name": "ساندویچ",
-      "image": "/uploads/1780417946690-759790891.png",
+      "image": "/default-assets/sandwich.svg",
       "order": 8
+    },
+    {
+      "id": "cat-burger",
+      "name": "برگر",
+      "image": "/default-assets/burger.svg",
+      "order": 9
     },
     {
       "id": "cat-fries",
       "name": "سیب زمینی",
-      "image": "/uploads/1780418123486-169625159.png",
+      "image": "/default-assets/fries.svg",
       "order": 10
     },
     {
       "id": "cat-hot-bar",
       "name": "هات بار",
-      "image": "/uploads/1780418448584-68823497.png",
+      "image": "/default-assets/hot-bar.svg",
       "order": 11
     },
     {
       "id": "cat-tea",
       "name": "چایی",
-      "image": "/uploads/1780418468647-186792279.png",
+      "image": "/default-assets/tea.svg",
       "order": 12
+    },
+    {
+      "id": "cat-smoothie",
+      "name": "اسموتی",
+      "image": "/default-assets/smoothie.svg",
+      "order": 13
+    },
+    {
+      "id": "cat-mocktail",
+      "name": "ماکتل",
+      "image": "/default-assets/mocktail.svg",
+      "order": 14
     },
     {
       "id": "cat-juice",
       "name": "آبمیوه",
-      "image": "/uploads/1780418512075-792965049.png",
+      "image": "/default-assets/juice.svg",
       "order": 15
     },
     {
       "id": "cat-drinks",
       "name": "نوشیدنی",
-      "image": "/uploads/1780418802230-125281420.png",
+      "image": "/default-assets/drinks.svg",
       "order": 16
     },
     {
       "id": "cat-breakfast",
       "name": "صبحانه",
-      "image": "/uploads/1780418774358-327205982.png",
+      "image": "/default-assets/breakfast.svg",
       "order": 17
+    },
+    {
+      "id": "cat-steak",
+      "name": "استیک",
+      "image": "/default-assets/steak.svg",
+      "order": 18
     }
   ],
   "items": [
@@ -149,6 +173,24 @@
       "description": "پودر ماچا گرید تشریفاتی، شیر، سیروپ وانیل",
       "image": "https://images.unsplash.com/photo-1536256263959-770b48d82b0a?auto=format&fit=crop&q=80&w=400",
       "order": 6
+    },
+    {
+      "id": "item-7",
+      "categoryId": "cat-burger",
+      "name": "کلاسیک برگر",
+      "price": "420,000",
+      "description": "۱۵۰ گرم گوشت گرم گوساله، کاهو، گوجه، خیارشور، سس مخصوص",
+      "image": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&q=80&w=400",
+      "order": 1
+    },
+    {
+      "id": "item-8",
+      "categoryId": "cat-burger",
+      "name": "ماشروم برگر",
+      "price": "460,000",
+      "description": "۱۵۰ گرم گوشت گوساله، سس قارچ و خامه، پنیر موزارلا",
+      "image": "https://images.unsplash.com/photo-1525059696034-4967a8e1dca2?auto=format&fit=crop&q=80&w=400",
+      "order": 2
     },
     {
       "id": "item-9",
