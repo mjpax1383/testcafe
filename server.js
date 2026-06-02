@@ -284,6 +284,15 @@ app.delete('/api/items/:id', authenticate, (req, res) => {
   }
 });
 
+// Image Upload Endpoint (Newly Added / Restored)
+app.post('/api/upload', authenticate, upload.single('image'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: 'فایلی ارسال نشده است.' });
+  }
+  const fileUrl = `/uploads/${req.file.filename}`;
+  res.json({ success: true, url: fileUrl });
+});
+
 // Get List of All Uploaded Files
 app.get('/api/uploads', authenticate, (req, res) => {
   fs.readdir(UPLOADS_DIR, (err, files) => {
