@@ -21,6 +21,24 @@ if (!fs.existsSync(UPLOADS_DIR)) {
   fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 }
 
+// Auto-migration (Newly Added): Copy any pre-existing files from public/uploads to persistent storage on startup
+const localUploadsDir = path.join(__dirname, 'public', 'uploads');
+if (fs.existsSync(localUploadsDir) && localUploadsDir !== UPLOADS_DIR) {
+  try {
+    const localFiles = fs.readdirSync(localUploadsDir);
+    localFiles.forEach(file => {
+      const srcPath = path.join(localUploadsDir, file);
+      const destPath = path.join(UPLOADS_DIR, file);
+      if (fs.statSync(srcPath).isFile() && !fs.existsSync(destPath) && !file.startsWith('.')) {
+        fs.copyFileSync(srcPath, destPath);
+        console.log(`Auto-migrated asset: ${file} to persistent storage.`);
+      }
+    });
+  } catch (e) {
+    console.error('Error during uploads auto-migration:', e);
+  }
+}
+
 // Serve public static assets
 app.use(express.static(path.join(__dirname, 'public')));
 // Serve uploaded images statically from persistent directory
